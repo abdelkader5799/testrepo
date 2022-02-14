@@ -11,53 +11,32 @@ if($_SERVER['REQUEST_METHOD']=="POST")
     
 $title = clean($_POST['title']);
 $contect=clean( $_POST['contect']);
-$image_name=$_FILES['img']['name'];
-$image_tmp=$_FILES['img']['tmp_name'];
-if(!empty($image_name))
-   {
-      $arr_name=explode('.',$image_name);
-      $extension=strtolower(end($arr_name));
-      $allow_ext=['png','jpg'];
-      if(in_array($extension,$allow_ext))
-        {
-            $dispath='upload/'.$image_name;
-            if(move_uploaded_file($image_tmp,$dispath))
-              {
-                  echo "successed uploaded"."<br>";
-              }
-            else
-               {
-                echo "failed uploaded"."<be>";
+$category=clean( $_POST['category']);
 
-               }   
-        }
-      else
-         {
-             echo "invailed extension"."<br>";
-         }  
-   }
-else
-   {
-       echo "image required"."<br>";
-   }
+require("conect.php");
 $error=[];
 
 if(empty($title))
 {
     $error['title']=" title required " ."<br>";
 }
+
 else if(strlen($title)<6)
 {
     $error['title']="required title > 6"."<br>";
+}
+if(empty($category))
+{
+    $error['category']=" category required " ."<br>";
 }
 if(empty($contect))
 {
     $error['contect']="contect required" ."<br>";
 }
-else if(strlen($contect)<50 and strlen($contect)<100)
-{
-    $error[$contect] ="contect > 50 and <100 "."<br>";
-}
+//else if(strlen($contect)<50 and strlen($contect)<100)
+//{
+   // $error[$contect] ="contect > 50 and <100 "."<br>";
+//}
 
 if(count($error)>0)
 {
@@ -71,23 +50,10 @@ if(count($error)>0)
 else
 {
     
-  $data=fopen('mahmoud.txt','a');
-            
-        fwrite($data,$title);
-        fwrite($data,"\n");
-        fwrite($data,$contect);
-        fwrite($data,"\n");
-        fwrite($data,$image_name);
-        fwrite($data,"\n");
-    
-       $data= fopen('mahmoud.txt','r');
-    
-       while(!feof($data))
-       {
-           echo fgets($data)."<br>";
-       }
+  $sql="INSERT INTO `user`( `title`, `contect`, `category`) VALUES('$title','$contect','$category')";
 
-    
+    mysqli_query($con,$sql);
+      
       
 }
 
@@ -124,8 +90,8 @@ else
             <input type="text" class="form-control"  name="contect" placeholder="Enter contect">
         </div>
         <div class="form-group">
-            <label>image</label>
-            <input type="file" class="form-control"  name="img" placeholder="Enter contect">
+            <label>category</label>
+            <input type="text" class="form-control"  name="category" placeholder="Enter category">
         </div>
 
 
